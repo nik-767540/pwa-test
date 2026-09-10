@@ -1,0 +1,55 @@
+{
+  "packageId": "tech.mobifly.helloworldpwa",
+  "host": "pwa-test-ochre-eight.vercel.app",
+  "name": "Hello World PWA",
+  "launcherName": "Hello World",
+  "display": "standalone",
+  "themeColor": "#0F172A",
+  "themeColorDark": "#000000",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#0F172A",
+  "enableNotifications": true,
+  "startUrl": "/?source=pwa",
+  "iconUrl": "https://pwa-test-ochre-eight.vercel.app/icons/icon-512.png",
+  "maskableIconUrl": "https://pwa-test-ochre-eight.vercel.app/icons/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "1",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "unknown",
+  "webManifestUrl": "https://pwa-test-ochre-eight.vercel.app/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://pwa-test-ochre-eight.vercel.app/",
+  "minSdkVersion": 21,
+  "orientation": "portrait-primary",
+  "fingerprints": [
+    {
+      "name": "upload",
+      "value": "7E:11:1A:2B:41:3E:BF:2D:14:C1:20:86:12:05:56:7C:B9:C1:9C:3E:30:59:8E:A0:4C:8A:AD:2F:C8:9A:C2:C7"
+    }
+  ],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "fileHandlers": [],
+  "launchHandlerClientMode": "",
+  "displayOverride": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "appVersion": "1"
+}

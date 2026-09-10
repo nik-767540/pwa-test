@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "tech.mobifly.helloworldpwa",
+        "sha256_cert_fingerprints": ["7E:11:1A:2B:41:3E:BF:2D:14:C1:20:86:12:05:56:7C:B9:C1:9C:3E:30:59:8E:A0:4C:8A:AD:2F:C8:9A:C2:C7"]
+      }
+    }]

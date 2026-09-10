@@ -128,6 +128,12 @@ export default function HelloWorld() {
             )}
           </ol>
         )}
+        <a
+          href="/privacy"
+          className="mt-8 inline-block text-xs text-slate-500 underline decoration-slate-500/40 underline-offset-4"
+        >
+          Privacy policy
+        </a>
       </div>
     </main>
   );
