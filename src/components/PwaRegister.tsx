@@ -4,17 +4,21 @@ import { useEffect } from "react";
 
 export default function PwaRegister() {
   useEffect(() => {
-    if (process.env.NODE_ENV !== "production") {
-      return;
-    }
-
     if (!("serviceWorker" in navigator)) {
       return;
     }
 
-    navigator.serviceWorker.register("/sw.js").catch((error) => {
-      console.error("Service worker registration failed", error);
-    });
+    const isVercel = window.location.hostname.endsWith("vercel.app");
+    if (process.env.NODE_ENV !== "production" && !isVercel) {
+      return;
+    }
+
+    navigator.serviceWorker
+      .register("/sw.js", { scope: "/", updateViaCache: "none" })
+      .then((registration) => registration.update())
+      .catch((error) => {
+        console.error("Service worker registration failed", error);
+      });
   }, []);
 
   return null;

@@ -1,4 +1,4 @@
-const CACHE_NAME = "hello-world-pwa-v1";
+const CACHE_NAME = "hello-world-pwa-v2";
 const PRECACHE_URLS = [
   "/",
   "/manifest.webmanifest",
@@ -8,40 +8,72 @@ const PRECACHE_URLS = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)),
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      await Promise.all(
+        PRECACHE_URLS.map(async (url) => {
+          try {
+            const response = await fetch(url, { cache: "reload" });
+            if (response.ok) {
+              await cache.put(url, response);
+            }
+          } catch {
+            // Keep install going even if one asset is temporarily unavailable.
+          }
+        }),
+      );
+      await self.skipWaiting();
+    })(),
   );
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)),
-      ),
-    ),
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(
+        keys
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => caches.delete(key)),
+      );
+      await self.clients.claim();
+    })(),
   );
-  self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") {
+  const request = event.request;
+  if (request.method !== "GET") {
+    return;
+  }
+
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) {
     return;
   }
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const fetched = fetch(event.request)
-        .then((response) => {
-          if (response && response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+    (async () => {
+      try {
+        const response = await fetch(request);
+        if (response && response.ok) {
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(request, response.clone());
+        }
+        return response;
+      } catch {
+        const cached = await caches.match(request);
+        if (cached) {
+          return cached;
+        }
+        if (request.mode === "navigate") {
+          const home = await caches.match("/");
+          if (home) {
+            return home;
           }
-          return response;
-        })
-        .catch(() => cached);
-
-      return cached || fetched;
-    }),
+        }
+        return Response.error();
+      }
+    })(),
   );
 });

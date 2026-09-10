@@ -81,4 +81,5 @@ const outDir = join(dirname(fileURLToPath(import.meta.url)), "../public/icons");
 mkdirSync(outDir, { recursive: true });
 writeFileSync(join(outDir, "icon-192.png"), png(192));
 writeFileSync(join(outDir, "icon-512.png"), png(512));
-console.log("Wrote icon-192.png and icon-512.png");
+writeFileSync(join(outDir, "apple-touch-icon.png"), png(180));
+console.log("Wrote icon-192.png, icon-512.png, and apple-touch-icon.png");

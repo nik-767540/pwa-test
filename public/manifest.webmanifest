@@ -1,13 +1,18 @@
 {
+  "id": "https://pwa-test-ochre-eight.vercel.app/",
   "name": "Hello World PWA",
   "short_name": "Hello World",
   "description": "A Next.js Hello World Progressive Web App",
-  "start_url": "/",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
   "orientation": "portrait-primary",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icons/icon-192.png",

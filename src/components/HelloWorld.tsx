@@ -1,5 +1,6 @@
 "use client";
 
+import { SITE_URL } from "@/lib/site";
 import { useEffect, useState } from "react";
 
 type BeforeInstallPromptEvent = Event & {
@@ -11,11 +12,16 @@ export default function HelloWorld() {
   const [online, setOnline] = useState(true);
   const [installed, setInstalled] = useState(false);
   const [workerReady, setWorkerReady] = useState(false);
-  const isProduction = process.env.NODE_ENV === "production";
+  const [workerError, setWorkerError] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
   const [installEvent, setInstallEvent] =
     useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
+    const userAgent = window.navigator.userAgent;
+    setIsAndroid(/Android/i.test(userAgent));
+    setIsIOS(/iPhone|iPad|iPod/i.test(userAgent));
     setOnline(navigator.onLine);
     setInstalled(window.matchMedia("(display-mode: standalone)").matches);
 
@@ -36,7 +42,9 @@ export default function HelloWorld() {
     window.addEventListener("beforeinstallprompt", onPrompt);
 
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.ready.then(() => setWorkerReady(true));
+      navigator.serviceWorker.ready
+        .then(() => setWorkerReady(true))
+        .catch(() => setWorkerError(true));
     }
 
     return () => {
@@ -59,6 +67,12 @@ export default function HelloWorld() {
     setInstallEvent(null);
   }
 
+  const workerLabel = workerReady
+    ? "Active"
+    : workerError
+      ? "Unavailable"
+      : "Registering";
+
   return (
     <main className="flex min-h-full flex-1 flex-col items-center justify-center px-6 py-16">
       <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-slate-900/70 p-10 text-center shadow-[0_24px_80px_rgba(15,23,42,0.45)] backdrop-blur">
@@ -69,22 +83,27 @@ export default function HelloWorld() {
           Hello World
         </h1>
         <p className="mt-4 text-base leading-7 text-slate-300">
-          This app can be installed on your device and still load after you go
-          offline.
+          Open this live site in Chrome on Android, then install it to your home
+          screen.
         </p>
+        <a
+          href={SITE_URL}
+          className="mt-4 inline-block break-all text-sm font-medium text-sky-300 underline decoration-sky-300/40 underline-offset-4"
+        >
+          {SITE_URL}
+        </a>
 
         <dl className="mt-8 grid grid-cols-1 gap-3 text-left sm:grid-cols-3">
           <Status label="Network" value={online ? "Online" : "Offline"} />
-          <Status
-            label="Worker"
-            value={
-              workerReady ? "Active" : isProduction ? "Registering" : "Dev mode"
-            }
-          />
+          <Status label="Worker" value={workerLabel} />
           <Status label="App" value={installed ? "Installed" : "Browser"} />
         </dl>
 
-        {installEvent && !installed ? (
+        {installed ? (
+          <p className="mt-8 text-sm text-slate-400">
+            Running as an installed app.
+          </p>
+        ) : installEvent ? (
           <button
             type="button"
             onClick={installApp}
@@ -93,11 +112,21 @@ export default function HelloWorld() {
             Install app
           </button>
         ) : (
-          <p className="mt-8 text-sm text-slate-400">
-            {installed
-              ? "Running as an installed app."
-              : "Use Chrome or Edge on this page to install it as a PWA."}
-          </p>
+          <ol className="mt-8 space-y-2 text-left text-sm leading-6 text-slate-300">
+            {isIOS ? (
+              <>
+                <li>1. Open this site in Safari.</li>
+                <li>2. Tap the Share button.</li>
+                <li>3. Tap Add to Home Screen.</li>
+              </>
+            ) : (
+              <>
+                <li>1. Open this site in Chrome{isAndroid ? " on Android" : ""}.</li>
+                <li>2. Tap the menu (three dots).</li>
+                <li>3. Tap Install app or Add to Home screen.</li>
+              </>
+            )}
+          </ol>
         )}
       </div>
     </main>
